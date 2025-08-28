@@ -1,7 +1,7 @@
 # Docker
 
-[Docker Documentation](https://docs.docker.com/)
-[Docker Get Started](https://docs.docker.com/get-started/)
+* [Docker Documentation](https://docs.docker.com/)
+* [Docker Get Started](https://docs.docker.com/get-started/)
 
 ## What is Docker?
 Docker es una plataforma abierta para desarrollar, desplegar y ejecutar aplicaciones. Permite separar las aplicaciones de la infraestructura al empaquetar todo lo necesario de una aplicación dentro de un contenedor.
