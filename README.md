@@ -36,3 +36,30 @@ Un contenedor es un instancia completamente ejecutable generada a partir de una 
 Por defecto, un contenedor está relativamente aislado de otros contenedores y del propio host, pero es posible controlar qué tan aislado está un contenedor de los aspectos con los que interactúa.
 
 Un contenedor es definido por la imagen de la que parte y por configuraciones adicionales dadas al momento de crearlo. Cuando un contendor es eliminado, sus cambios y estado que no han sido guardados serán completamente eliminados.
+
+## What is a container?
+De forma simple, los contenedores son procesos aislados que ejecutan tareas específicas. Un contenedor contiene todo lo que necesita para funcionar sin depender de lo instalado en el sistema host (versiones, plataformas, dependencias). Están completamente aislados de otros contenedores, aunque pueden comunicarse entre ellos, lo que los convierte en procesos independientes, seguros y portables.
+
+### Containers VS Virtual Machines
+Una máquina virtual incluye un sistema operativo completo con su propio kernel, drivers y programas. Un contenedor es simplemente un proceso aislado con los componentes necesarios para funcionar. Por lo tanto, múltiples contenedores comparten el mismo kernel del sistema operativo host, haciéndolos más eficientes que las VMs.
+
+## What is an image?
+Una imagen es un paquete estandarizado que contiene todos los archivos, binarios, librerías y configuraciones necesarias para ejecutar un contenedor (proceso). Las imágenes tienen dos características fundamentales:
+* **Las imágenes son inmutables:** una vez que una imagen ha sido creada no puede modificarse, pero, sí se pueden crear nuevas imágenes con los nuevos cambios usando como base la imagen previa.
+* **Las imágenes se componen de capas:** cada capa de una imagen representa un conjunto de modificaciones en el sistema de archivos que agregan, eliminan o modifican archivos.
+
+### Finding images
+[Docker Hub](https://hub.docker.com/) es el registry oficial y global para almacenar y distribuir Docker images, con más de 100,000 imágenes de diferentes proveedores avalados por Docker.
+
+## What is a registry?
+Un registry es una ubicación centralizada para almacenar y distribuir Docker images. Pueden ser públicos o privados. Docker Hub es el registry por defecto, pero no es la única opción.
+
+### Registry VS Repository
+Un registry es una ubicación centralizada que almacena y gestiona imágenes; mientras que un repository es una colección de imágenes relacionadas dentro de un registry. Por lo tanto, un Registry es un concepto más amplio que gestiona todo el ecosistema de Docker images, y un Repository simplemente agrupa imágenes relacionadas entre sí.
+
+## What is Docker Compose?
+Docker Compose es una herramienta que permite definir y gestionar aplicaciones multi-contenedor mediante un archivo de configuración `.yml`. Con este archivo, ejecutar aplicaciones que requieren múltiples contenedores se vuelve mucho más sencillo.
+
+Es importante entender que Compose es una herramienta declarativa, donde simplemente se define qué contenedores se necesitan y cómo deben configurarse, y la herramienta se encarga de gestionar todo el ciclo de vida.
+
+Esta herramienta se puede confundir con Dockerfile, pero Dockerfile define las instrucciones para construir una Docker image, mientras que Compose define cómo orquestar múltiples contenedores. Generalmente ambas herramientas se usan juntas.
