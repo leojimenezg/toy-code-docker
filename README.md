@@ -63,3 +63,16 @@ Docker Compose es una herramienta que permite definir y gestionar aplicaciones m
 Es importante entender que Compose es una herramienta declarativa, donde simplemente se define qué contenedores se necesitan y cómo deben configurarse, y la herramienta se encarga de gestionar todo el ciclo de vida.
 
 Esta herramienta se puede confundir con Dockerfile, pero Dockerfile define las instrucciones para construir una Docker image, mientras que Compose define cómo orquestar múltiples contenedores. Generalmente ambas herramientas se usan juntas.
+
+## Image layers
+Las imágenes son planos para construir contenedores, que contienen todo lo necesario para ejecutar de forma independiente dicho contenedor. Todas las imágenes son inmutables una vez creadas y se componen de distintas capas, donde cada capa contiene un conjunto de cambios en el sistema de archivos: agregar, eliminar o modificar archivos.
+
+Las capas de las imágenes permiten la reutilización, agregando solamente las nuevas capas necesarias a una nueva imagen y reduciendo la cantidad de instrucciones y contenido duplicado.
+
+### Stacking layers
+Usar distintas capas como un conjunto es posible debido al almacenamiento de contenido direccionable (content-addressable storage). Así funciona:
+* Una vez descargado el contenido de una capa, es extraído y puesto en su propio directorio en el sistema de archivos
+* Cuando se ejecuta el contenedor, se crea un sistema de archivos unificado donde las capas son apiladas una sobre otra, resultando en una vista unificada
+* Al iniciar el contenedor, su directorio raíz corresponde al sistema de archivos unificado (`chroot`)
+
+Además de las capas de imagen, se crea una capa de escritura específica para el contenedor, permitiendo que haga cambios sin afectar la imagen original. Esto permite ejecutar múltiples contenedores de la misma imagen.
