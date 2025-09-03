@@ -76,3 +76,59 @@ Usar distintas capas como un conjunto es posible debido al almacenamiento de con
 * Al iniciar el contenedor, su directorio raíz corresponde al sistema de archivos unificado (`chroot`)
 
 Además de las capas de imagen, se crea una capa de escritura específica para el contenedor, permitiendo que haga cambios sin afectar la imagen original. Esto permite ejecutar múltiples contenedores de la misma imagen.
+
+## Dockerfile
+Un archivo llamado Dockerfile es un documento de texto usado para crear una imagen, pues provee las instrucciones necesarias para construirla.
+
+Las siguientes instrucciones son algunas de las más comunes que un Dockerfile incluye:
+* `FROM <image>`: Especifica la imagen base de la cual se va a extender
+* `WORKDIR <path>`: Establece el directorio de trabajo donde se ejecutarán los comandos y se copiarán archivos
+* `COPY <host-path> <image-path>`: Copia archivos del host hacia la imagen
+* `RUN <command>`: Ejecuta un comando durante la construcción de la imagen
+* `ENV <name> <value>`: Establece una variable de entorno disponible para el contenedor
+* `EXPOSE <port-number>`: Documenta qué puerto usará la aplicación (no lo abre automáticamente)
+* `USER <user-or-uid>`: Establece el usuario por defecto para las siguientes instrucciones
+* `CMD ["<command>", "<arg1>"]`: Define el comando por defecto que ejecutará el contenedor al iniciarse
+
+Para más comandos está la [Dockerfile reference](https://docs.docker.com/reference/dockerfile/).
+
+## Build, tag and publish an image
+Este es el flujo de trabajo fundamental para distribuir aplicaciones en contenedores. El proceso consiste en crear una imagen local, asignarle un nombre y versión, y finalmente publicarla en un registro para su distribución.
+
+### Building images
+Las imágenes se construyen a partir de un archivo de configuración denominado Dockerfile mediante el comando docker build. Este proceso lee las instrucciones del Dockerfile, obtiene la imagen base requerida y ejecuta cada paso para ensamblar las capas de la imagen final.
+
+El comando en su forma más básica es:
+```bash
+docker build .
+```
+
+Al ejecutarlo, Docker busca un Dockerfile en el directorio actual `.`. El resultado es una imagen sin etiqueta (conocida como "dangling image"), la cual solo es identificable por su ID único.
+
+### Tagging images
+El etiquetado es el proceso de asignar un nombre legible y versionado a una imagen, lo cual es indispensable para su gestión y publicación. La estructura estándar de una etiqueta es la siguiente:
+* `[HOST[:PORT_NUMBER]/]PATH[:TAG]`, donde:
+    * `HOST`: El nombre del registro donde se encuentra la imagen (opcional). Si no es especificado, Docker busca en el registro público `docker.io` por defecto
+    * `PORT_NUMBER`: El número de puerto del registro, si es proporcionado
+    * `PATH`: El path de la imagen construida por componentes separados por `/`. En Docker Hub, se debe seguir la estructura `[NAMESPACE/]REPOSITORY`, donde NAMESPACE es el nombre de usuario u organización. Sino es especificado, Docker usa `library`, que es el namespace para Docker Official Images
+    * `TAG`: Un identificador personalizable usado generalmente para identificar diferentes versiones o variantes de una imagen. Si no es especificado, de una `latest` por defecto
+
+El etiquetado se puede realizar de dos formas:
+* Durante la construcción, usando la bandera -t o --tag:
+    ```bash
+    docker build -t mi-usuario/mi-app:v1.0.0
+    ```
+* Después de la construcción, sobre una imagen existente mediante su ID:
+    ```bash
+    docker tag <ID> mi-usuario/mi-app:v1.0.0
+    ```
+
+### Publishing images
+Una vez que una imagen está construida y correctamente etiquetada con su `NAMESPACE`, está lista para ser compartida en un registro.
+
+Para publicarla, se utiliza el comando `docker push`:
+```bash
+docker push mi-usuario/mi-app:v1.0.0
+```
+
+## Using the build cache
