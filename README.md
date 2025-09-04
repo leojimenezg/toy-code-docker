@@ -114,7 +114,7 @@ El etiquetado es el proceso de asignar un nombre legible y versionado a una imag
     * `TAG`: Un identificador personalizable usado generalmente para identificar diferentes versiones o variantes de una imagen. Si no es especificado, de una `latest` por defecto
 
 El etiquetado se puede realizar de dos formas:
-* Durante la construcción, usando la bandera -t o --tag:
+* Durante la construcción, usando la bandera `-t` o `--tag`:
     ```bash
     docker build -t mi-usuario/mi-app:v1.0.0
     ```
@@ -131,4 +131,22 @@ Para publicarla, se utiliza el comando `docker push`:
 docker push mi-usuario/mi-app:v1.0.0
 ```
 
-## Using the build cache
+## Build cache
+Cuando se usa el comando `docker build` para crear una imagen, Docker ejecuta cada instrucción del Dockerfile creando una capa por instrucción en orden en que se presentan. Sin embargo, Docker verifica si puede reutilizar cada instrucción desde construcciones previas. Si detecta que ya ejecutó una instrucción idéntica anteriormente, la reutiliza desde el caché en lugar de ejecutarla nuevamente.
+
+Usar el build cache efectivamente acelera la construcción de imágenes al reutilizar resultados previos, evitando trabajo innecesario. Para usarlo efectivamente, es necesario entender cuándo se invalida el caché:
+* **Cambios en `RUN`**: Cualquier modificación en comandos `RUN` invalida esa capa
+* **Cambios en archivos copiados**: Modificaciones en archivos usados por `COPY` o `ADD` invalidan esas capas  
+* **Invalidación en cascada**: Una vez que una capa se invalida, todas las capas siguientes también se invalidan automáticamente
+
+Docker invalida capas dependientes para mantener consistencia y prevenir inconsistencias en la imagen resultante. Por lo tanto, es importante considerar el build cache al escribir Dockerfiles para lograr construcciones más rápidas y eficientes.
+
+## Multi-stage builds
+En la construcción tradicional de imágenes, todas las instrucciones son ejecutadas secuencialmente para construir un único contenedor al: descargar dependencias, compilar código, empaquetar la aplicación, etc. Todas esas capas son contenidas en la imagen resultante. Esta forma de trabajar funciona, pero puede producir imágenes pesadas con contenido innecesario e incluso generar vulnerabilidades de seguridad. Aquí es donde entra el multi-stage build.
+
+Esta técnica introduce múltiples fases (stages) en un Dockerfile, cada una con un propósito específico. Es como ejecutar diferentes partes de múltiples builds en un mismo proceso, permitiendo separar el entorno de construcción del entorno de ejecución. Es decir, separar el entorno donde está todo lo necesario para construir el proyecto, del entorno donde está únicamente lo que se necesita para ejecutar la aplicación.
+
+Utilizar multi-stage builds es recomendado para todo tipo de aplicaciones:
+* **Lenguajes interpretados** (JavaScript, Python, Ruby): construir y minimizar código en una fase, luego copiar solo los archivos necesarios para ejecución
+* **Lenguajes compilados** (Go, Rust, C++): compilar en una fase, luego copiar solo los binarios resultantes
+
