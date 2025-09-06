@@ -150,3 +150,35 @@ Utilizar multi-stage builds es recomendado para todo tipo de aplicaciones:
 * **Lenguajes interpretados** (JavaScript, Python, Ruby): construir y minimizar código en una fase, luego copiar solo los archivos necesarios para ejecución
 * **Lenguajes compilados** (Go, Rust, C++): compilar en una fase, luego copiar solo los binarios resultantes
 
+## Publish and expose ports
+Los contenedores ejecutan aplicaciones de forma completamente aislada de otros procesos. Sin embargo, aunque este aislamiento proporciona seguridad y facilita el manejo de aplicaciones, también significa que **no es posible** acceder directamente a los procesos desde el exterior.
+
+Aquí es donde la publicación de puertos es fundamental.
+
+### Publish port
+Publicar un puerto crea un puente de comunicación entre el proceso aislado y el entorno externo al establecer reglas de acceso directo. La publicación ocurre al ejecutar un contenedor usando la flag `-p` o `--publish`:
+```bash
+docker run -d -p HOST_PORT:CONTAINER_PORT nginx
+```
+* `HOST_PORT`: Puerto de la máquina local (host) donde se recibirá el tráfico
+* `CONTAINER_PORT`: Puerto del contenedor donde la aplicación escucha
+
+Es importante saber que cuando un puerto es publicado, se hace accesible desde todas las interfaces de red por defecto.
+
+### Publish to ephemeral ports
+Si no importa qué puerto del host usar, Docker puede elegir automáticamente omitiendo el `HOST_PORT`:
+```bash
+docker run -d -p :80 nginx   # Docker asigna puerto del host automáticamente
+```
+
+Los puertos elegidos por Docker son generalmente mayores a 1024 para evitar conflictos con puertos del sistema.
+
+### Publish to all ports
+La instrucción `EXPOSE` en el Dockerfile indica qué puertos usará el contenedor, pero no los publica automáticamente. Con `-P` o `--publish-all` se publican todos los puertos expuestos usando ephemeral ports:
+```bash
+docker run -P nginx
+```
+
+Esto es útil para evitar conflictos de puertos al dirigir tráfico a contenedores.
+
+## Override container defaults
