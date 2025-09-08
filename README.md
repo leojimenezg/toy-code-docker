@@ -182,3 +182,41 @@ docker run -P nginx
 Esto es útil para evitar conflictos de puertos al dirigir tráfico a contenedores.
 
 ## Override container defaults
+Todos los contenedores tienen configuraciones por defecto que funcionan para casos generales, pero es posible personalizarlas según necesidades específicas.
+
+El comando `docker run` permite sobrescribir configuraciones por defecto mediante flags, incluyendo pero no limitado:
+* **Comando de inicio**: Cambiar qué ejecuta el contenedor al iniciarse
+* **Variables de entorno**: Configurar la aplicación sin reconstruir la imagen
+* **Puertos**: Publicar puertos diferentes a los definidos por defecto
+* **Volúmenes**: Montar directorios del host al contenedor
+* **Nombre del contenedor**: Asignar nombres específicos en lugar de aleatorios
+* **Recursos**: Limitar CPU, memoria y otros recursos
+
+**Ejemplos comunes:**
+```bash
+docker run ubuntu ls -la # Sobrescribir comando por defecto
+
+docker run -e NODE_ENV=production mi-app # Configurar variables de entorno
+
+docker run --name mi-contenedor nginx # Cambiar nombre del contenedor
+```
+
+Esta flexibilidad hace que Docker sea adaptable a diferentes entornos y casos de uso sin necesidad de crear múltiples imágenes.
+
+## Persist container data
+Cuando un contenedor es ejecutado utiliza únicamente los archivos contenidos en la imagen de la cual fue construido. Los contenedores pueden crear, modificar o eliminar archivos sin afectar a otros contenedores. Sin embargo, una vez que el contenedor es eliminado, todos los cambios realizados se pierden. Esta característica efímera de los contenedores es útil, pero introduce el desafío de guardar información que debe persistir.
+
+### Container volumes
+Un volumen es un mecanismo que permite almacenar información que persiste más allá del ciclo de vida individual de un contenedor.
+
+Un volumen es básicamente un directorio en el host independiente del contenedor, pero accesible por él. Cuando el contenedor que use ese volumen sea eliminado, la información persiste en el host y otros contenedores pueden usar ese mismo volumen.
+
+Además, cuando se asigna un volumen a un contenedor y este no existe, Docker automáticamente crea el volumen. Un mismo volumen puede ser compartido por múltiples contenedores.
+
+### Manage volumes
+Los volúmenes tienen su propio ciclo de vida independiente de los contenedores, por lo que pueden crecer significativamente. Los siguientes comandos permiten gestionarlos:
+* `docker volume ls`: Lista todos los volúmenes existentes
+* `docker volume rm <volume-name-or-id>`: Elimina un volumen específico (solo si no está en uso)
+* `docker volume prune`: Elimina todos los volúmenes no utilizados
+
+## Share local files with containers
