@@ -220,3 +220,37 @@ Los volúmenes tienen su propio ciclo de vida independiente de los contenedores,
 * `docker volume prune`: Elimina todos los volúmenes no utilizados
 
 ## Share local files with containers
+Los contenedores tienen todo lo necesario para funcionar independientemente del host. Debido a que se ejecutan como procesos aislados, obtienen muchos beneficios de seguridad y portabilidad. Sin embargo, esto también significa que no pueden acceder a archivos del host por defecto.
+
+Para resolver esto, Docker proporciona dos mecanismos para persistir información y compartir archivos: **volumes** y **bind mounts**.
+
+### Volume VS Bind mounts
+* **Volume**: Mejor opción cuando se requiere asegurar que información generada por un contenedor persista después de que el contenedor se elimine
+* **Bind mount**: Mejor opción para compartir archivos específicos del host que no deben estar dentro del contenedor (configuraciones, credenciales)
+
+### Share files between host and container
+Las flags `-v` (o `--volume`) y `--mount` en el comando `docker run` permiten compartir archivos entre host y contenedor:
+
+**Flag `-v` (simple):**
+```bash
+docker run -v /HOST/PATH:/CONTAINER/PATH nginx
+```
+* Más simple para operaciones básicas
+* Crea automáticamente directorios/archivos si no existen
+
+**Flag `--mount` (avanzada):**
+```bash
+docker run --mount type=bind,source=/HOST/PATH,target=/CONTAINER/PATH,readonly nginx
+```
+* Mayor control y opciones granulares
+* Falla si el directorio/archivo no existe (más seguro)
+* Recomendada por Docker para producción
+
+### File permissions
+Con `--mount` es importante asegurar que Docker tenga los permisos necesarios:
+* `:rw`: Lectura y escritura
+* `:ro`: Solo lectura
+
+Docker recomienda `--mount` por su especificidad y control, evitando problemas potenciales.
+
+## Multi-container applications
