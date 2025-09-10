@@ -3,6 +3,8 @@
 * [Docker Documentation](https://docs.docker.com/)
 * [Docker Get Started](https://docs.docker.com/get-started/)
 
+***Docker Get Started***
+
 ## What is Docker?
 Docker es una plataforma abierta para desarrollar, desplegar y ejecutar aplicaciones. Permite separar las aplicaciones de la infraestructura al empaquetar todo lo necesario de una aplicación dentro de un contenedor.
 
@@ -254,3 +256,18 @@ Con `--mount` es importante asegurar que Docker tenga los permisos necesarios:
 Docker recomienda `--mount` por su especificidad y control, evitando problemas potenciales.
 
 ## Multi-container applications
+Una de las mejores prácticas de los contenedores es que cada contenedor debe hacer una sola cosa y hacerla bien. Aunque hay excepciones, esta es la mejor forma de evitar que un solo contenedor haga múltiples cosas, lo cual lo vuelve difícil de desarrollar, mantener y más pesado.
+
+Entonces, usar el comando `docker run` para ejecutar cada uno de los contenedores individuales que conforman la aplicación funciona, pero puede representar más desventajas que ventajas debido a la gestión manual que requiere administrar cada contenedor por separado. Aquí es donde Docker Compose se convierte en la mejor opción.
+
+Docker Compose define toda una aplicación con múltiples contenedores en un único archivo llamado `compose.yml` (también puede llamarse `docker-compose.yml`). Dicho archivo especifica todas las configuraciones para cada uno de los contenedores, sus dependencias, variables de entorno, volúmenes e incluso redes de comunicación. Por lo tanto, esto permite:
+* No tener que gestionar cada uno de los contenedores de forma individual, centralizando la configuración y gestión de todos los contenedores
+* Ejecutar contenedores en un orden específico y gestionar conexiones entre ellos fácilmente
+* Implementar volúmenes de manera más sencilla y consistente
+* Establecer variables de entorno de forma centralizada y organizada
+* Crear redes automáticamente para la comunicación entre contenedores
+
+Para ejecutar todos los servicios definidos en el archivo `compose`, se utiliza el siguiente comando:
+```bash
+docker compose up -d --build
+```
